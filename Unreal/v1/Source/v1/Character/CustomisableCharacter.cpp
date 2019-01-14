@@ -9,11 +9,13 @@ ACustomisableCharacter::ACustomisableCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	HeadComponent = CreateDefaultSubobject<UHeadComponent>(TEXT("Head Component"));
+	auto HeadComponent = CreateDefaultSubobject<UHeadComponent>(TEXT("Head Component"));
 	HeadComponent->SetupAttachment(GetMesh());
+	ComponentBySlot.Add(EClothesSlot::Head, HeadComponent);
 
-	BodyComponent = CreateDefaultSubobject<UClothesComponent>(TEXT("Body Component"));
+	auto BodyComponent = CreateDefaultSubobject<UClothesComponent>(TEXT("Body Component"));
 	BodyComponent->SetupAttachment(GetMesh());
+	ComponentBySlot.Add(EClothesSlot::Body, BodyComponent);
 }
 
 // Called when the game starts or when spawned
@@ -45,19 +47,20 @@ void ACustomisableCharacter::Equip(UAppearanceItem* Item) {
 	if (!ensure(Item)) return;
 	if (!ensure(Item->SkeletalMesh)) return;
 
-	if (Item->Slot == EClothesSlot::Body)
-	{
-		BodyComponent->SetSkeletalMesh(Item->SkeletalMesh);
+	UE_LOG(LogTemp, Warning, TEXT("Equipping an Item"));
 
-		// TODO: stop hardcoding to first option - should be a loop over all colour options
-		UMaterialInterface * Material = BodyComponent->GetMaterial(1);
-		UMaterialInstanceDynamic* NewMaterial = BodyComponent->CreateDynamicMaterialInstance(1, Material);
+	EquippedItems.Add(Item->Slot, Item);
+	ComponentBySlot[Item->Slot]->SetSkeletalMesh(Item->SkeletalMesh);
 
-		if (ensure(NewMaterial))
-		{
-			NewMaterial->SetVectorParameterValue(Item->ColourOptions[0].ParameterName, Item->ColourOptions[0].DefaultColor);
+	Item->ApplyColourOption(ComponentBySlot[Item->Slot], 0, Item->ColourOptions[0].DefaultColor);
+	Item->SetSkinTone(ComponentBySlot[Item->Slot], SkinTone);
+}
 
-			BodyComponent->SetMaterial(1, NewMaterial);
-		}
+// TODO: Skin should be a material eventually, not just a colour
+void ACustomisableCharacter::SetSkinTone(FLinearColor NewColour) {
+	UE_LOG(LogTemp, Warning, TEXT("Setting Skin Tone"));
+	for (auto Equipment : EquippedItems) {
+		UE_LOG(LogTemp, Warning, TEXT("Updating Skin Tone on an Item"));
+		Equipment.Value->SetSkinTone(ComponentBySlot[Equipment.Value->Slot], NewColour);
 	}
 }

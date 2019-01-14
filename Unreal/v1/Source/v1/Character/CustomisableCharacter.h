@@ -26,14 +26,22 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Character")
 	UAppearanceItem* DefaultBody;
 
+	// TODO: Skin should be a material eventually, not just a colour
+	UPROPERTY(EditAnywhere, Category = "Character")
+	FLinearColor SkinTone;
+
+	// TODO: Skin should be a material eventually, not just a colour
+	UPROPERTY(EditAnywhere, Category = "Character")
+	TArray<FLinearColor> SkinToneOptions;
+
+	// TODO: Skin should be a material eventually, not just a colour
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	void SetSkinTone(FLinearColor NewColour);
+
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UHeadComponent* HeadComponent;
-
-	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UClothesComponent* BodyComponent;
-
+	TMap<EClothesSlot, UAppearanceItem*> EquippedItems;
+	TMap<EClothesSlot, USkeletalMeshComponent*> ComponentBySlot;
 };

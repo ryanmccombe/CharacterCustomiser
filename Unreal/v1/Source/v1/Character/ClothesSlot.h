@@ -4,6 +4,7 @@
 
 UENUM(BlueprintType)
 enum class EClothesSlot : uint8 {
+	Head,
 	Body,
 	Legs,
 	Feet
