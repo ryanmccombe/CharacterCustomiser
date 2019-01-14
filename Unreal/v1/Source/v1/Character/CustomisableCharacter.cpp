@@ -2,18 +2,17 @@
 #include "HeadComponent.h"
 #include "ClothesComponent.h"
 #include "AppearanceItem.h"
-#include "Materials/MaterialInstanceDynamic.h"
 
 ACustomisableCharacter::ACustomisableCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	auto HeadComponent = CreateDefaultSubobject<UHeadComponent>(TEXT("Head Component"));
+	HeadComponent = CreateDefaultSubobject<UHeadComponent>(TEXT("Head Component"));
 	HeadComponent->SetupAttachment(GetMesh());
 	ComponentBySlot.Add(EClothesSlot::Head, HeadComponent);
 
-	auto BodyComponent = CreateDefaultSubobject<UClothesComponent>(TEXT("Body Component"));
+	BodyComponent = CreateDefaultSubobject<UClothesComponent>(TEXT("Body Component"));
 	BodyComponent->SetupAttachment(GetMesh());
 	ComponentBySlot.Add(EClothesSlot::Body, BodyComponent);
 }
@@ -22,8 +21,11 @@ ACustomisableCharacter::ACustomisableCharacter()
 void ACustomisableCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	if (ensure(DefaultBody))
-	{
+	if (ensureMsgf(DefaultHead && DefaultHead->Slot == EClothesSlot::Head, TEXT("Default head slot item is missing"))) {
+		Equip(DefaultHead);
+	}
+
+	if (ensureMsgf(DefaultBody && DefaultBody->Slot == EClothesSlot::Body, TEXT("Default body slot item is missing"))) {
 		Equip(DefaultBody);
 	}
 	
@@ -44,15 +46,18 @@ void ACustomisableCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 }
 
 void ACustomisableCharacter::Equip(UAppearanceItem* Item) {
-	if (!ensure(Item)) return;
-	if (!ensure(Item->SkeletalMesh)) return;
-
-	UE_LOG(LogTemp, Warning, TEXT("Equipping an Item"));
+	if (!ensureMsgf(Item, TEXT("Tried to equip a nullptr"))) return;
+	if (!ensureMsgf(Item->SkeletalMesh, TEXT("Tried to equip an item with no skeletal mesh"))) return;
 
 	EquippedItems.Add(Item->Slot, Item);
 	ComponentBySlot[Item->Slot]->SetSkeletalMesh(Item->SkeletalMesh);
 
-	Item->ApplyColourOption(ComponentBySlot[Item->Slot], 0, Item->ColourOptions[0].DefaultColor);
+	// TODO: Move to Item class?
+	for (auto Option : Item->ColourOptions)
+	{
+		Item->ApplyColourOption(ComponentBySlot[Item->Slot], 0, Option.DefaultColor);
+	}
+
 	Item->SetSkinTone(ComponentBySlot[Item->Slot], SkinTone);
 }
 

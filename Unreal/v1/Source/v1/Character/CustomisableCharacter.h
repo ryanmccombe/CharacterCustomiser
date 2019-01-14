@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Character")
 	UAppearanceItem* DefaultBody;
 
+	UPROPERTY(EditAnywhere, Category = "Character")
+	UAppearanceItem* DefaultHead;
+
 	// TODO: Skin should be a material eventually, not just a colour
 	UPROPERTY(EditAnywhere, Category = "Character")
 	FLinearColor SkinTone;
@@ -33,6 +36,12 @@ public:
 	// TODO: Skin should be a material eventually, not just a colour
 	UPROPERTY(EditAnywhere, Category = "Character")
 	TArray<FLinearColor> SkinToneOptions;
+
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UHeadComponent* HeadComponent;
+
+	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UClothesComponent* BodyComponent;
 
 	// TODO: Skin should be a material eventually, not just a colour
 	UFUNCTION(BlueprintCallable, Category = "Character")
