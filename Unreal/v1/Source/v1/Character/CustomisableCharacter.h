@@ -34,7 +34,7 @@ public:
 	FLinearColor SkinTone;
 
 	// TODO: Skin should be a material eventually, not just a colour
-	UPROPERTY(EditAnywhere, Category = "Character")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	TArray<FLinearColor> SkinToneOptions;
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
