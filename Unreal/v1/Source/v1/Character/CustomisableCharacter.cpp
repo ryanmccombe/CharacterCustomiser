@@ -52,20 +52,12 @@ void ACustomisableCharacter::Equip(UAppearanceItem* Item) {
 	EquippedItems.Add(Item->Slot, Item);
 	ComponentBySlot[Item->Slot]->SetSkeletalMesh(Item->SkeletalMesh);
 
-	// TODO: Move to Item class?
-	for (auto Option : Item->ColourOptions)
-	{
-		Item->ApplyColourOption(ComponentBySlot[Item->Slot], 0, Option.DefaultColor);
-	}
-
-	Item->SetSkinTone(ComponentBySlot[Item->Slot], SkinTone);
+	Item->InitialiseItemOnCharacter(this);
 }
 
 // TODO: Skin should be a material eventually, not just a colour
 void ACustomisableCharacter::SetSkinTone(FLinearColor NewColour) {
-	UE_LOG(LogTemp, Warning, TEXT("Setting Skin Tone"));
 	for (auto Equipment : EquippedItems) {
-		UE_LOG(LogTemp, Warning, TEXT("Updating Skin Tone on an Item"));
 		Equipment.Value->SetSkinTone(ComponentBySlot[Equipment.Value->Slot], NewColour);
 	}
 }

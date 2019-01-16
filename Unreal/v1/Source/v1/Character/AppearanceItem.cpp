@@ -2,8 +2,8 @@
 
 #include "AppearanceItem.h"
 #include "Materials/MaterialInstanceDynamic.h"
-#include "Engine/SkeletalMesh.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "CustomisableCharacter.h"
 
 void UAppearanceItem::SetSkinTone(USkeletalMeshComponent* Mesh, FLinearColor Tone)
 {
@@ -20,6 +20,7 @@ void UAppearanceItem::SetSkinTone(USkeletalMeshComponent* Mesh, FLinearColor Ton
 	}
 }
 
+// Apply a colour option from this AppearanceItem to a SkeletalMeshComponent
 void UAppearanceItem::ApplyColourOption(USkeletalMeshComponent* Component, int32 OptionIndex, FLinearColor Colour)
 {
 	if (!ensure(Component)) return;
@@ -28,7 +29,22 @@ void UAppearanceItem::ApplyColourOption(USkeletalMeshComponent* Component, int32
 	UMaterialInstanceDynamic* NewMaterial = Component->CreateDynamicMaterialInstance(ColourOptions[OptionIndex].MaterialId, CurrentMaterial);
 
 	if (ensure(NewMaterial)) {
-		NewMaterial->SetVectorParameterValue(ColourOptions[OptionIndex].ParameterName, ColourOptions[OptionIndex].DefaultColor);
+		NewMaterial->SetVectorParameterValue(ColourOptions[OptionIndex].ParameterName, Colour);
 		Component->SetMaterial(1, NewMaterial);
 	}
+}
+
+// Apply a colour option from this AppearanceItem to the matching slot in a CustomisableCharacter
+void UAppearanceItem::ApplyColourOptionToCharacter(ACustomisableCharacter* Character, int32 OptionIndex, FLinearColor Colour)
+{
+	ApplyColourOption(Character->ComponentBySlot[Slot], OptionIndex, Colour);
+}
+
+void UAppearanceItem::InitialiseItemOnCharacter(ACustomisableCharacter* Character)
+{
+	for (auto Option : ColourOptions) {
+		ApplyColourOption(Character->ComponentBySlot[Slot], 0, Option.DefaultColor);
+	}
+
+	SetSkinTone(Character->ComponentBySlot[Slot], Character->SkinTone);
 }

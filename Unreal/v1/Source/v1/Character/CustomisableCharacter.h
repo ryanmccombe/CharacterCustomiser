@@ -37,6 +37,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	TArray<FLinearColor> SkinToneOptions;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
+	TMap<EClothesSlot, UAppearanceItem*> EquippedItems;
+
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UHeadComponent* HeadComponent;
 
@@ -47,10 +50,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	void SetSkinTone(FLinearColor NewColour);
 
+	TMap<EClothesSlot, USkeletalMeshComponent*> ComponentBySlot;
+
 protected:
 	virtual void BeginPlay() override;
-
-private:
-	TMap<EClothesSlot, UAppearanceItem*> EquippedItems;
-	TMap<EClothesSlot, USkeletalMeshComponent*> ComponentBySlot;
 };

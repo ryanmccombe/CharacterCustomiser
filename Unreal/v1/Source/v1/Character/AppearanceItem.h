@@ -7,6 +7,8 @@
 
 #include "AppearanceItem.generated.h"
 
+class ACustomisableCharacter;
+
 UCLASS(BlueprintType)
 class V1_API UAppearanceItem : public UDataAsset
 {
@@ -41,6 +43,12 @@ public:
 	UFUNCTION()
 	void SetSkinTone(USkeletalMeshComponent* Mesh, FLinearColor Tone);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Character")
 	void ApplyColourOption(USkeletalMeshComponent* Component, int32 OptionIndex, FLinearColor Colour);
+
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	void ApplyColourOptionToCharacter(ACustomisableCharacter* Character, int32 OptionIndex, FLinearColor Colour);
+
+	UFUNCTION(BlueprintCallable, Category = "Character")
+	void InitialiseItemOnCharacter(ACustomisableCharacter* Character);
 };
