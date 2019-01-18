@@ -1,0 +1,10 @@
+CustomiserHUD
+ - Customiser
+   - Skin Tone Picker
+     - Colour Button[]
+   - (for each clothes slot...)
+     - Appearance Item Selector
+       - Appearance Item Button[]
+     - Appearance Item Customiser
+       - Appearance Item Option[]
+         - Colour Button[]

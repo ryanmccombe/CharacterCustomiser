@@ -8,6 +8,8 @@
 class UHeadComponent;
 class UClothesComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemEquippedSignature, UAppearanceItem*, EquippedItem);
+
 UCLASS()
 class V1_API ACustomisableCharacter : public ACharacter
 {
@@ -49,6 +51,9 @@ public:
 	// TODO: Skin should be a material eventually, not just a colour
 	UFUNCTION(BlueprintCallable, Category = "Character")
 	void SetSkinTone(FLinearColor NewColour);
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnItemEquippedSignature OnItemEquipped;
 
 	TMap<EClothesSlot, USkeletalMeshComponent*> ComponentBySlot;
 

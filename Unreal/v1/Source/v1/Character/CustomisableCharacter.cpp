@@ -49,14 +49,20 @@ void ACustomisableCharacter::Equip(UAppearanceItem* Item) {
 	if (!ensureMsgf(Item, TEXT("Tried to equip a nullptr"))) return;
 	if (!ensureMsgf(Item->SkeletalMesh, TEXT("Tried to equip an item with no skeletal mesh"))) return;
 
+	// Don't re-equip same item
+	if (EquippedItems.Contains(Item->Slot) && EquippedItems[Item->Slot] == Item) return;
+
 	EquippedItems.Add(Item->Slot, Item);
 	ComponentBySlot[Item->Slot]->SetSkeletalMesh(Item->SkeletalMesh);
 
 	Item->InitialiseItemOnCharacter(this);
+	OnItemEquipped.Broadcast(Item);
 }
 
 // TODO: Skin should be a material eventually, not just a colour
 void ACustomisableCharacter::SetSkinTone(FLinearColor NewColour) {
+	SkinTone = NewColour;
+
 	for (auto Equipment : EquippedItems) {
 		Equipment.Value->SetSkinTone(ComponentBySlot[Equipment.Value->Slot], NewColour);
 	}
